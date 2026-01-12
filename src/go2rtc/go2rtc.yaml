@@ -1,0 +1,6 @@
+streams:
+  cam1: rtsp://admin:Inmo9013@10.0.0.55:554/Streaming/Channels/102
+
+webrtc:
+  candidates:
+    - stun:stun.l.google.com:19302

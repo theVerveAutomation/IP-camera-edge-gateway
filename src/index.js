@@ -16,8 +16,10 @@ function streamCamera(rtspUrl, cloudUrl) {
 
 
 // Example usage
-const rtspUrl = process.env.RTSP_URL; // Use RTSP URL from .env file
-const cloudUrl = process.env.CLOUD_URL; // Use Cloud URL from .env file
+const cameras_json = process.env.CAMERAS_JSON; // Use Cameras JSON from .env file
 
 
-streamCamera(rtspUrl, cloudUrl);
+for (const camers of JSON.parse(cameras_json)) {
+    streamCamera(camers.rtsp_url, camers.cloud_url);
+}
+// streamCamera(rtspUrl, cloudUrl);

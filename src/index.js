@@ -1,17 +1,33 @@
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 require('dotenv').config();
 
 
 // Example function to pull RTSP and push to cloud
 function streamCamera(camera_name, rtspUrl, cloudUrl) {
-    const cmd = `ffmpeg -hide_banner -rtsp_transport tcp -i ${rtspUrl} -c capy output${camera_name}.mp4`;
-    console.log(`Executing command for ${camera_name}:  ${cmd}`);
-    const process = exec(cmd);
-    process.stdout.on('data', data => console.log("stdout output: " + data));
-    process.stderr.on('data', data => console.error("stderr error: " + data));
-    process.on('exit', code => console.log(`Process exited with code ${code} `));
-    process.on('error', err => console.error("Process error: " + err));
-    process.on('close', code => console.log(`Process closed with code ${code} `));
+    // const cmd = `ffmpeg -hide_banner -rtsp_transport tcp -i ${rtspUrl} -c copy output${camera_name}.mp4`;
+    const args = ['-hide_banner', '-rtsp_transport', 'tcp', '-i', rtspUrl, '-c', 'copy', `output${camera_name.trim()}.mp4`];
+    const ffmpeg = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    console.log(`Executing command for ${camera_name}:  ${'ffmpeg ' + args.join(' ')}`);
+
+    ffmpeg.stdout.on('data', (data) => {
+        console.log(`STDOUT [${camera_name}]: ${data}`);
+    });
+
+    ffmpeg.stderr.on('data', (data) => {
+        console.log(`STDERR [${camera_name}]: ${data}`);
+    })
+
+    ffmpeg.on('close', (code) => {
+        console.log(`FFMPEG process for ${camera_name} exited with code ${code}`);
+    });
+
+    ffmpeg.on('error', (err) => {
+        console.error(`Failed to start FFMPEG process for ${camera_name}: ${err}`);
+    });
+
+    ffmpeg.on('exit', (code, signal) => {
+        console.log(`FFMPEG process for ${camera_name} exited with code ${code} and signal ${signal}`);
+    });
 }
 
 

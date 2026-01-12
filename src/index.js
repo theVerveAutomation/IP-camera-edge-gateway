@@ -12,7 +12,7 @@ function streamCamera(camera_name, rtspUrl, cloudUrl) {
         '-vcodec', 'libx264', //-vcodec h264_vaapi (Intel GPU), -vcodec h264_nvenc (NVIDIA GPU)
         '-preset', 'ultrafast', '-tune', 'zerolatency',
         '-vf', 'scale=1280:720,fps=25',
-        '-c', 'copy', `output${camera_name.trim()}.mp4`
+        '-an', '-f', 'flv', cloudUrl
     ];
     const ffmpeg = spawn('ffmpeg', args, { stdio: ['ignore', 'pipe', 'pipe'] });
     console.log(`Executing command for ${camera_name}:  ${'ffmpeg ' + args.join(' ')}`);

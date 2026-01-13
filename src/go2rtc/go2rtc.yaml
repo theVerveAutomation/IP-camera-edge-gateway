@@ -1,5 +1,6 @@
 streams:
-  
+
+publish:
 
 webrtc:
   ice_servers:

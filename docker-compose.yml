@@ -8,12 +8,12 @@ services:
       - "1984:1984" # web UI / API
       - "8554:8554" # optional RTSP
     volumes:
-      - ./go2rtc/go2rtc.yaml:/config/go2rtc.yaml
-      - ./go2rtc/logs:/logs
-      - ./go2rtc/recordings:/recordings
+      - ./src/go2rtc/go2rtc.yaml:/config/go2rtc.yaml
+      - ./src/go2rtc/logs:/logs
+      - ./src/go2rtc/recordings:/recordings
 
   node-agent:
-    build: ./node-agent
+    build: ./
     container_name: node-agent
     restart: unless-stopped
     depends_on:

@@ -4,9 +4,9 @@ const { checkGo2rtcHealth } = require('./utils/healthCheck');
 
 async function startEdgeAgent() {
     console.log('Starting Edge Gateway Agent...');
-    console.log(`Loaded : ${config.camerasJson}`);
     for (const cam of config.camerasJson) {
-        await addStream(cam.name, cam.rtsp_url || cam.host);
+        console.log(`Adding stream for camera: ${cam.name} at ${cam.rtsp_url}`);
+        await addStream(cam.name, cam.rtsp_url);
     }
 
     // Health monitoring
@@ -16,4 +16,4 @@ async function startEdgeAgent() {
     }, 10000);
 }
 
-startEdgeAgent();
+// startEdgeAgent();

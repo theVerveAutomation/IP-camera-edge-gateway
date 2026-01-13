@@ -24,4 +24,4 @@ services:
       - CLOUD_URL=${CLOUD_URL}
       - JWT_SECRET=${JWT_SECRET}
     volumes:
-      - ./node-agent:/usr/src/app
+      - ./src/

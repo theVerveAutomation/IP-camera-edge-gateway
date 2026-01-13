@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/theVerveAutomation/IP-camera-edge-gateway#readme",
   "dependencies": {
+    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "ws": "^8.19.0"

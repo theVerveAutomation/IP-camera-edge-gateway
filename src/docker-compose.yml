@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  go2rtc:
+    image: alexxit/go2rtc
+    container_name: go2rtc
+    restart: unless-stopped
+    ports:
+      - "1984:1984" # web UI / API
+      - "8554:8554" # optional RTSP
+    volumes:
+      - ./go2rtc/go2rtc.yaml:/config/go2rtc.yaml
+      - ./go2rtc/logs:/logs
+      - ./go2rtc/recordings:/recordings
+
+  node-agent:
+    build: ./node-agent
+    container_name: node-agent
+    restart: unless-stopped
+    depends_on:
+      - go2rtc
+    environment:
+      - NODE_ENV=production
+      - CAMERAS_JSON=${CAMERAS_JSON}
+      - CLOUD_URL=${CLOUD_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./node-agent:/usr/src/app

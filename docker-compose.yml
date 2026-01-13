@@ -13,7 +13,9 @@ services:
       - ./src/go2rtc/recordings:/recordings
 
   node-agent:
-    build: ./
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: node-agent
     restart: unless-stopped
     depends_on:
@@ -24,4 +26,4 @@ services:
       - CLOUD_URL=${CLOUD_URL}
       - JWT_SECRET=${JWT_SECRET}
     volumes:
-      - ./src/
+      - ./src/:/src

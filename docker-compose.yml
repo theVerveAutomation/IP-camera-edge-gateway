@@ -3,6 +3,8 @@ services:
     image: alexxit/go2rtc
     container_name: go2rtc
     restart: unless-stopped
+    networks:
+      - app-net
     ports:
       - "1984:1984" # web UI / API
       - "8554:8554" # optional RTSP
@@ -16,6 +18,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: node-agent
+    networks:
+      - app-net
     restart: unless-stopped
     depends_on:
       - go2rtc
@@ -28,3 +32,7 @@ services:
     volumes:
       - ./src/:/src
       - ./snapshots/:/snapshots
+
+networks:
+  app-net:
+    external: true

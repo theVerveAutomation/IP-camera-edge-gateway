@@ -1,6 +1,7 @@
 const { addStream } = require('./stream-manager');
 const config = require('./config');
 const { checkGo2rtcHealth } = require('./utils/healthCheck');
+const snapshotJob = require('./scheduler/snapshot.job');
 
 async function startEdgeAgent() {
     console.log('Starting Edge Gateway Agent...');
@@ -16,4 +17,5 @@ async function startEdgeAgent() {
     }, 10000);
 }
 
-// startEdgeAgent();
+startEdgeAgent();
+

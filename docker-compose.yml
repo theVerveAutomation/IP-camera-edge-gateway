@@ -30,8 +30,8 @@ services:
       # - CLOUD_URL=${CLOUD_URL}
       # - JWT_SECRET=${JWT_SECRET}
     volumes:
-      - ./src/:/src
-      - ./snapshots/:/snapshots
+      - ./src/:/usr/src/app/src
+      - ./snapshots/:/usr/src/app/src/snapshots
 
 networks:
   app-net:

@@ -1,0 +1,38 @@
+services:
+  go2rtc:
+    image: alexxit/go2rtc
+    container_name: go2rtc
+    restart: unless-stopped
+    networks:
+      - app-net
+    ports:
+      - "1984:1984" # web UI / API
+      - "8554:8554" # optional RTSP
+    volumes:
+      - ./src/go2rtc/go2rtc.yaml:/config/go2rtc.yaml
+      - ./src/go2rtc/logs:/logs
+      - ./src/go2rtc/recordings:/recordings
+
+  node-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-agent
+    networks:
+      - app-net
+    restart: unless-stopped
+    depends_on:
+      - go2rtc
+    environment:
+      - NODE_ENV=production
+      - SNAPSHOT_INTERVAL=3600
+      # - CAMERAS_JSON=${CAMERAS_JSON}
+      # - CLOUD_URL=${CLOUD_URL}
+      # - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./src/:/usr/src/app/src
+      - ./snapshots/:/usr/src/app/src/snapshots
+
+networks:
+  app-net:
+    external: true

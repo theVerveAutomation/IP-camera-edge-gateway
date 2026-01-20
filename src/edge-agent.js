@@ -18,7 +18,7 @@ socket.on('edge_registered', () => {
 });
 
 // HANDLER: Start Stream
-socket.on('cmd_stream_start', async ({ camId, ingestUrl }) => {
+socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
     const streamName = `relay_${camId}`;
 
     console.log(`[${camId}] Starting Relay to Cloud...`);
@@ -27,11 +27,12 @@ socket.on('cmd_stream_start', async ({ camId, ingestUrl }) => {
     // 1. -i rtsp://... : Read from local camera (via Go2RTC loopback or direct IP)
     // 2. -c copy       : Do NOT re-encode video (Low CPU usage)
     // 3. -f flv        : Format required for RTMP
-    const ffmpegCmd = `exec:ffmpeg -i rtsp://127.0.0.1:8554/${camId} -c copy -f flv ${ingestUrl}?user=edge_agent&pass=SuperSecretEdgePassword`;
-
+    const ffmpegCmd = `exec:ffmpeg -i rtsp://127.0.0.1:8554/${camId} -c copy -f flv ${ingestUrl}`;
+    console.log(`[${camId}] FFmpeg Command: ${ffmpegCmd}`);
+    console.log(`relay: ${streamName}`);
     try {
         // We use PUT to create/update the stream configuration dynamically
-        await axios.put(`${GO2RTC_API}/streams`, null, {
+        await axios.put(`${GO2RTC_API}/streams`, {
             params: {
                 src: ffmpegCmd,
                 name: streamName

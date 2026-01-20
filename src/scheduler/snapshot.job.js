@@ -5,7 +5,7 @@ const { camerasJson } = require('../config');
 function RunSnapshot() {
     console.log("Scheduling snapshot capture job...");
 
-    cron.schedule("* * * * *", async () => {
+    cron.schedule("0 * * * *", async () => {
         console.log("Starting scheduled snapshot capture...");
         for (const cam of camerasJson) {
             console.log(`Capturing snapshot for camera: ${cam.name}`);

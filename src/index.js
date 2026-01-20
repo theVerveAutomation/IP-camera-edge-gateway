@@ -17,7 +17,7 @@ async function startEdgeAgent() {
     setInterval(async () => {
         const healthy = await checkGo2rtcHealth();
         if (!healthy) console.error('go2rtc is down!');
-    }, 10000);
+    }, 30000);
 }
 
 // startEdgeAgent();

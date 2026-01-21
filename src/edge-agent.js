@@ -20,6 +20,7 @@ socket.on('edge_registered', () => {
 // HANDLER: Start Stream
 socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
     // const streamName = `relay_${camId}`;
+    const cloud_ingestURL = `${CLOUD_URL}/${ingestUrl}`;
 
     console.log(`[${camId}] Starting Relay to Cloud...`);
 
@@ -30,12 +31,12 @@ socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
     // const ffmpegCmd = `exec:ffmpeg -i rtsp://127.0.0.1:8554/${camId} -c copy -f flv ${ingestUrl}`;
     // console.log(`[${camId}] FFmpeg Command: ${ffmpegCmd}`);
     // console.log(`relay: ${streamName}`);
-    console.log(`[${camId}] Ingest URL: ${ingestUrl}`);
+    console.log(`[${camId}] Ingest URL: ${cloud_ingestURL}`);
     try {
         const res = await axios.post(`${GO2RTC_API}/streams`, null, {
             params: {
                 src: camId,
-                dst: ingestUrl
+                dst: cloud_ingestURL
             }
         });
         console.log(`[${camId}] go2rtc Response:`, JSON.stringify(res.data));

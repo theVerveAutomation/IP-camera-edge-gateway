@@ -21,10 +21,12 @@
   },
   "homepage": "https://github.com/theVerveAutomation/IP-camera-edge-gateway#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.90.1",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "node-cron": "^4.2.1",
+    "socket.io-client": "^4.8.3",
     "ws": "^8.19.0"
   },
   "devDependencies": {

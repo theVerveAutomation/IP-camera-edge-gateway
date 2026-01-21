@@ -32,12 +32,13 @@ socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
     console.log(`relay: ${streamName}`);
     try {
         // We use PUT to create/update the stream configuration dynamically
-        await axios.put(`${GO2RTC_API}/streams`, {
+        const res = await axios.put(`${GO2RTC_API}/streams`, {
             params: {
                 src: ffmpegCmd,
                 name: streamName
             }
         });
+        console.log(`[${camId}] go2rtc Response:`, JSON.stringify(res.data));
         console.log(`[${camId}] Stream Active`);
     } catch (err) {
         console.error(`[${camId}] Failed to start:`, err.message);

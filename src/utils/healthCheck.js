@@ -17,5 +17,5 @@ setInterval(async () => {
     } else {
         console.log('go2rtc is healthy');
     }
-}, 10000);
+}, 10000000);
 module.exports = { checkGo2rtcHealth };

@@ -19,7 +19,7 @@ socket.on('edge_registered', () => {
 
 // HANDLER: Start Stream
 socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
-    const streamName = `relay_${camId}`;
+    // const streamName = `relay_${camId}`;
 
     console.log(`[${camId}] Starting Relay to Cloud...`);
 
@@ -27,15 +27,15 @@ socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
     // 1. -i rtsp://... : Read from local camera (via Go2RTC loopback or direct IP)
     // 2. -c copy       : Do NOT re-encode video (Low CPU usage)
     // 3. -f flv        : Format required for RTMP
-    const ffmpegCmd = `exec:ffmpeg -i rtsp://127.0.0.1:8554/${camId} -c copy -f flv ${ingestUrl}`;
-    console.log(`[${camId}] FFmpeg Command: ${ffmpegCmd}`);
-    console.log(`relay: ${streamName}`);
+    // const ffmpegCmd = `exec:ffmpeg -i rtsp://127.0.0.1:8554/${camId} -c copy -f flv ${ingestUrl}`;
+    // console.log(`[${camId}] FFmpeg Command: ${ffmpegCmd}`);
+    // console.log(`relay: ${streamName}`);
+    console.log(`[${camId}] Ingest URL: ${ingestUrl}`);
     try {
-        // We use PUT to create/update the stream configuration dynamically
-        const res = await axios.put(`${GO2RTC_API}/streams`, {
+        const res = await axios.post(`${GO2RTC_API}/streams`, null, {
             params: {
-                src: ffmpegCmd,
-                name: streamName
+                src: camId,
+                dst: ingestUrl
             }
         });
         console.log(`[${camId}] go2rtc Response:`, JSON.stringify(res.data));
@@ -43,6 +43,19 @@ socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
     } catch (err) {
         console.error(`[${camId}] Failed to start:`, err.message);
     }
+    // try {
+    //     // We use PUT to create/update the stream configuration dynamically
+    //     const res = await axios.put(`${GO2RTC_API}/streams`, {
+    //         params: {
+    //             src: ffmpegCmd,
+    //             name: streamName
+    //         }
+    //     });
+    //     console.log(`[${camId}] go2rtc Response:`, JSON.stringify(res.data));
+    //     console.log(`[${camId}] Stream Active`);
+    // } catch (err) {
+    //     console.error(`[${camId}] Failed to start:`, err.message);
+    // }
 });
 
 // HANDLER: Stop Stream

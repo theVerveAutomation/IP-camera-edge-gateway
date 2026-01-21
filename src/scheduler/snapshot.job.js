@@ -9,17 +9,9 @@ function RunSnapshot() {
         console.log("Starting scheduled snapshot capture...");
         for (const cam of camerasJson) {
             console.log(`Capturing snapshot for camera: ${cam.name}`);
-            await captureSnapshot(cam.name, cam.rtsp_url);
+            await captureSnapshot(cam.id, cam.name, cam.rtsp_url);
         }
     });
 }
 
 module.exports = RunSnapshot;
-
-cron.schedule("* * * * *", async () => {
-    console.log("Starting scheduled snapshot capture...");
-    for (const cam of require('../config').camerasJson) {
-        console.log(`Capturing snapshot for camera: ${cam.name}`);
-        await captureSnapshot(cam.id, cam.name, cam.rtsp_url);
-    }
-});

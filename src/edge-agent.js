@@ -1,36 +1,28 @@
 const io = require('socket.io-client');
 const axios = require('axios');
-const { CLOUD_URL, GO2RTC_API, EDGE_ID } = require('./config');
+const { cloudUrl, GO2RTC_API, EDGE_ID } = require('./config');
 const { startEdgeAgent } = require('./index');
 
-const socket = io(CLOUD_URL);
+const socket = io(cloudUrl);
 
-console.log('Connecting to Cloud at', CLOUD_URL);
+console.log('Connecting to Cloud at', cloudUrl);
 
 socket.on('connect', () => {
     console.log('Connected to Cloud');
     socket.emit('register_edge', EDGE_ID);
 });
 
-socket.on('edge_registered', () => {
+socket.on('edge_registered', (data) => {
     console.log('Edge Gateway registered successfully with Cloud');
-    startEdgeAgent();
+    startEdgeAgent(data);
 });
 
 // HANDLER: Start Stream
-socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
+socket.on('cmd_stream_push', async ({ camId, ingestPath }) => {
     // const streamName = `relay_${camId}`;
-    const cloud_ingestURL = `${CLOUD_URL}/${ingestUrl}`;
+    const cloud_ingestURL = `${cloudUrl}/${ingestPath}`;
 
     console.log(`[${camId}] Starting Relay to Cloud...`);
-
-    // The FFmpeg Command:
-    // 1. -i rtsp://... : Read from local camera (via Go2RTC loopback or direct IP)
-    // 2. -c copy       : Do NOT re-encode video (Low CPU usage)
-    // 3. -f flv        : Format required for RTMP
-    // const ffmpegCmd = `exec:ffmpeg -i rtsp://127.0.0.1:8554/${camId} -c copy -f flv ${ingestUrl}`;
-    // console.log(`[${camId}] FFmpeg Command: ${ffmpegCmd}`);
-    // console.log(`relay: ${streamName}`);
     console.log(`[${camId}] Ingest URL: ${cloud_ingestURL}`);
     try {
         const res = await axios.post(`${GO2RTC_API}/streams`, null, {
@@ -41,22 +33,11 @@ socket.on('cmd_stream_push', async ({ camId, ingestUrl }) => {
         });
         console.log(`[${camId}] go2rtc Response:`, JSON.stringify(res.data));
         console.log(`[${camId}] Stream Active`);
+        socket.emit('relay_info', { success: true, data: { CameraId: camId, url: cloud_ingestURL } });
     } catch (err) {
         console.error(`[${camId}] Failed to start:`, err.message);
+        socket.emit('relay_info', { success: false, data: err.message });
     }
-    // try {
-    //     // We use PUT to create/update the stream configuration dynamically
-    //     const res = await axios.put(`${GO2RTC_API}/streams`, {
-    //         params: {
-    //             src: ffmpegCmd,
-    //             name: streamName
-    //         }
-    //     });
-    //     console.log(`[${camId}] go2rtc Response:`, JSON.stringify(res.data));
-    //     console.log(`[${camId}] Stream Active`);
-    // } catch (err) {
-    //     console.error(`[${camId}] Failed to start:`, err.message);
-    // }
 });
 
 // HANDLER: Stop Stream

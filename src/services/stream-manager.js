@@ -1,11 +1,12 @@
 const axios = require('axios');
+const { GO2RTC_API } = require('../config');
 
-const GO2RTC_API = 'http://go2rtc:1984/api/streams';
+const GO2RTC_API_STREAMS = `${GO2RTC_API}/streams`;
 
 async function getAllStreams() {
     console.log('Fetching all streams from go2rtc...');
     try {
-        const res = await axios.get(GO2RTC_API);
+        const res = await axios.get(GO2RTC_API_STREAMS);
         console.log('Streams fetched:', res.data);
         return res.data;
     } catch (err) {
@@ -14,9 +15,9 @@ async function getAllStreams() {
     }
 }
 
-async function addStream(name, rtspUrl) {
+async function addStream(name, url) {
     try {
-        const res = await axios.put(`http://go2rtc:1984/api/streams?src=${rtspUrl}&name=${name}`);
+        const res = await axios.put(`${GO2RTC_API_STREAMS}?src=${url}&name=${name}`);
         console.log(`Stream ${name} added`);
         return res.data;
     } catch (err) {
@@ -26,7 +27,7 @@ async function addStream(name, rtspUrl) {
 
 async function removeStream(name) {
     try {
-        const res = await axios.delete(`${GO2RTC_API}/${name}`);
+        const res = await axios.delete(`${GO2RTC_API_STREAMS}?name=${name}`);
         console.log(`Stream ${name} removed`);
         return res.data;
     } catch (err) {

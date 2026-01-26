@@ -1,6 +1,6 @@
 const io = require('socket.io-client');
 const axios = require('axios');
-const { cloudUrl, GO2RTC_API, EDGE_ID } = require('./config');
+const { cloudUrl, RTMP_PUBLISH_URL, GO2RTC_API, EDGE_ID } = require('./config');
 const { startEdgeAgent } = require('./index');
 
 const socket = io(cloudUrl);
@@ -20,7 +20,7 @@ socket.on('edge_registered', (data) => {
 // HANDLER: Start Stream
 socket.on('cmd_stream_push', async ({ camId, ingestPath }) => {
     // const streamName = `relay_${camId}`;
-    const cloud_ingestURL = `${cloudUrl}/${ingestPath}`;
+    const cloud_ingestURL = `${RTMP_PUBLISH_URL}/${ingestPath}`;
 
     console.log(`[${camId}] Starting Relay to Cloud...`);
     console.log(`[${camId}] Ingest URL: ${cloud_ingestURL}`);

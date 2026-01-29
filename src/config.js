@@ -9,4 +9,5 @@ module.exports = {
     CLOUD_URL: process.env.CLOUD_URL || 'http://localhost:3001',
     GO2RTC_API: process.env.GO2RTC_URL,
     EDGE_ID: process.env.EDGE_ID || 'edge001',
+    RTMP_PUBLISH_URL: process.env.RTMP_PUBLISH_URL
 };

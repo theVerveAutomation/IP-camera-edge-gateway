@@ -46,6 +46,7 @@ async function uploadToSupabase(filePath, cameraId, cameraName) {
             .insert({
                 camera_id: cameraId,
                 url: publicUrl,
+                capture_methosd: 'time',
             })
             .select()
             .single();

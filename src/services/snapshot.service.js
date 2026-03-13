@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 const { supabaseUrl, supabaseKey, supabaseBucket } = require('../config');
+const { time } = require('console');
 
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -14,12 +15,11 @@ const supabase = createClient(supabaseUrl, supabaseKey);
  * @param {string} cameraName - Name of the camera (for file naming)
  * @returns {Promise<{url: string, record: object} | null>}
  */
-async function uploadToSupabase(filePath, cameraId, cameraName) {
+async function uploadToSupabase(filePath, cameraId, cameraName, timestamp) {
     try {
         const fileBuffer = fs.readFileSync(filePath);
         const fileName = path.basename(filePath);
-        const storagePath = `${cameraName}/${fileName}`;
-
+        const storagePath = `${cameraName}/${timestamp}_${fileName}`;
         // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
             .from(supabaseBucket)
@@ -47,6 +47,7 @@ async function uploadToSupabase(filePath, cameraId, cameraName) {
                 camera_id: cameraId,
                 url: publicUrl,
                 capture_method: 'time',
+                timestamp: timestamp || new Date().toISOString(),
             })
             .select()
             .single();
@@ -77,7 +78,7 @@ async function uploadToSupabase(filePath, cameraId, cameraName) {
  */
 function captureSnapshot(cameraId, cameraName, rtspUrl) {
     return new Promise((resolve) => {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const timestamp = new Date().toISOString();
         const snapshotDir = path.join(__dirname, '..', 'snapshots');
 
         if (!fs.existsSync(snapshotDir)) {
@@ -98,7 +99,7 @@ function captureSnapshot(cameraId, cameraName, rtspUrl) {
             console.log(`Snapshot captured for ${cameraName} at ${snapshotPath}`);
 
             // Upload to Supabase and save to database
-            const result = await uploadToSupabase(snapshotPath, cameraId, cameraName);
+            const result = await uploadToSupabase(snapshotPath, cameraId, cameraName, timestamp);
             resolve(result);
         });
     });
